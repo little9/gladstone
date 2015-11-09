@@ -53,12 +53,12 @@ var Handbag = {
     },
     createBagDirectory(args) {
         console.log(args);
-        fs.mkdir(Handbag.settings.currentPath + "/" + args.bagName, function(err) {
+        fs.mkdir(Handbag.settings.currentPath + '/' + args.bagName, function(err) {
             if (err) throw err;
-            console.log("Made" + Handbag.settings.currentPath + "/" + args.bagName )
-            fs.mkdir(Handbag.settings.currentPath + "/" + args.bagName  + "/data", function(err) {
+            console.log('Made' + Handbag.settings.currentPath + '/' + args.bagName );
+            fs.mkdir(Handbag.settings.currentPath + '/' + args.bagName  + '/data', function(err) {
                 if (err) throw err;
-                console.log("Made data directory");
+                console.log('Made data directory');
                 Handbag.writeBagInfo(args);
                 Handbag.copyOriginToData(args);
               
@@ -68,18 +68,18 @@ var Handbag = {
     },
     writeBagInfo : function(args) {
         fs.writeFile(Handbag.settings.currentPath + 
-            "/" + args.bagName  
-            + "/" + "bag_info.txt",Handbag.bagInfoTxt, function (err) {
+            '/' + args.bagName  
+            + '/' + 'bag_info.txt',Handbag.bagInfoTxt, function (err) {
                 if (err) throw err;
                 return true;
             });
     },
     copyOriginToData : function(args) {
         ncp(args.originDirectory, Handbag.settings.currentPath 
-        + "/" + args.bagName  + "/data", function(err) {
+        + '/' + args.bagName  + '/data', function(err) {
             if (err) throw err;
             
-            Handbag.createManifest(Handbag.settings.currentPath + "/" + args.bagName  + "/data", args);
+            Handbag.createManifest(Handbag.settings.currentPath + '/' + args.bagName  + '/data', args);
             return true;
         });
     },
@@ -95,11 +95,11 @@ var Handbag = {
 
                     } else {
                     
-                        var manifestFileName = Handbag.settings.currentPath + "/" + args.bagName + "/" + "manifest_" + Handbag.settings.cryptoMethod +  ".txt";
+                        var manifestFileName = Handbag.settings.currentPath + '/' + args.bagName + '/' + 'manifest_' + Handbag.settings.cryptoMethod +  '.txt';
                         var stream = fs.createReadStream(file);
 
                         stream.on('data', function (data) {
-                            hash.update(data, 'utf8')  
+                            hash.update(data, 'utf8'); 
                         });
 
                         stream.on('end', function () {
@@ -107,7 +107,7 @@ var Handbag = {
                             var fileName = file.replace(Handbag.settings.currentPath,'')
                                 .replace(args.bagName, '')
                                 .replace(/\\\\/g,'')
-                                .replace(/\\/g,"/");
+                                .replace(/\\/g,'/');
                             var manifestLine = fileName + ' ' + myHash + '\n';
                             fs.appendFile(manifestFileName,manifestLine, function(err) {
                                 if (err) throw err;
