@@ -1,0 +1,22 @@
+{
+  "name": "handbag",
+  "version": "1.0.0",
+  "description": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "bagit",
+    "loc",
+    "bag",
+    "bagging",
+    "digital",
+    "preservation"
+  ],
+  "author": "Jamie Little",
+  "license": "NCSA",
+  "devDependencies": {
+    "should": "^7.1.1"
+  }
+}
