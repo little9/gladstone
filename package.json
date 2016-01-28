@@ -1,26 +1,31 @@
 {
-  "name": "handbag",
-  "version": "1.0.0",
-  "description": "0.1.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "keywords": [
-    "bagit",
-    "loc",
-    "bag",
-    "bagging",
-    "digital",
-    "preservation"
-  ],
-  "author": "Jamie Little",
-  "license": "NCSA",
-  "devDependencies": {
-    "should": "^7.1.1"
-  },
+    "name": "gladstone",
+    "version": "0.1.2",
+    "description": "Command line utility for creating BagIt archives.",
+    "main": "index.js",
+    "repository" : "https://github.com/little9/gladstone",
+    "scripts": {
+	"test": "mocha"
+    },
+    "bin": {
+	"filesearch": "index.js"
+    },
+    "preferGlobal": true,
+    "keywords": [
+	"bagit",
+	"loc",
+	"bag",
+	"bagging",
+	"digital",
+	"preservation"
+    ],
+    "author": "Jamie Little",
+    "license": "NCSA",
+    "devDependencies": {
+	"should": "^7.1.1"
+    },
     "dependencies" : {
 	"recursive-readdir" : "latest",
 	"ncp" : "latest"
-  }
+    }
 }

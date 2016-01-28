@@ -1,48 +1,45 @@
-#!/usr/bin/env node
-
 var fs = require('fs'),
-    crypto = require('crypto');
-    path = require('path');
-    recursive = require('recursive-readdir');
+    crypto = require('crypto'),
+    path = require('path'),
+    recursive = require('recursive-readdir'),
     ncp = require('ncp').ncp;
 
-
-var Handbag = {
+var Gladstone = {
     settings: {
         cryptoMethod: 'md5',
         testPath: process.cwd() + '/test/',
-        currentPath : process.cwd(),
-        bagName : '',
-        originDirectory : ''
+        currentPath: process.cwd(),
+        bagName: '',
+        originDirectory: ''
     },
-    userArgs : {
+    userArgs: {
 
     },
-    strings : {
-        noBagName : 'Please specify a bag name',
-        noOrigin : 'Please specify an origin directory name',
-        bagInfoTxt : 'BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8',
-        manifestArray : []
+    strings: {
+        noBagName: 'Please specify a bag name',
+        noOrigin: 'Please specify an origin directory name',
+        bagInfoTxt: 'BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8',
+        manifestArray: []
     },
-       
-    processArgs : function(args) {
-      //  var myArgs = process.argv;
+
+    processArgs: function (args) {
+
         var userArgs = {};
-        
-        if (typeof args[2] === 'undefined'){ 
-            console.log(Handbag.strings.noBagName);
+
+        if (typeof args[2] === 'undefined') {
+            console.log(Gladstone.strings.noBagName);
         } else {
             userArgs.bagName = args[2];
         }
 
-        if (typeof args[3] === 'undefined'){ 
-            console.log(Handbag.strings.noOrigin);
+        if (typeof args[3] === 'undefined') {
+            console.log(Gladstone.strings.noOrigin);
         } else {
             userArgs.originDirectory = args[3];
         }
 
-        if (typeof args[3] === 'undefined'){ 
-            console.log(Handbag.strings.noCryptoMethod);
+        if (typeof args[3] === 'undefined') {
+            console.log(Gladstone.strings.noCryptoMethod);
             userArgs.cryptoMethod = 'md5';
         } else {
             userArgs.cryptoMethod = args[4];
@@ -51,69 +48,67 @@ var Handbag = {
 
         return userArgs;
     },
-    createBagDirectory(args) {
+    createBagDirectory: function (args) {
         console.log(args);
-        fs.mkdir(Handbag.settings.currentPath + '/' + args.bagName, function(err) {
+        fs.mkdir(Gladstone.settings.currentPath + '/' + args.bagName, function (err) {
             if (err) throw err;
-            console.log('Made' + Handbag.settings.currentPath + '/' + args.bagName );
-            fs.mkdir(Handbag.settings.currentPath + '/' + args.bagName  + '/data', function(err) {
+            console.log('Made' + Gladstone.settings.currentPath + '/' + args.bagName);
+            fs.mkdir(Gladstone.settings.currentPath + '/' + args.bagName + '/data', function (err) {
                 if (err) throw err;
                 console.log('Made data directory');
-                Handbag.writeBagInfo(args);
-                Handbag.copyOriginToData(args);
-              
+                Gladstone.writeBagInfo(args);
+                Gladstone.copyOriginToData(args);
+
             });
-                
+
         });
     },
-    writeBagInfo : function(args) {
-        fs.writeFile(Handbag.settings.currentPath + 
-            '/' + args.bagName  
-            + '/' + 'bag_info.txt',Handbag.bagInfoTxt, function (err) {
+    writeBagInfo: function (args) {
+        fs.writeFile(Gladstone.settings.currentPath +
+            '/' + args.bagName + '/' + 'bag-info.txt', Gladstone.bagInfoTxt, function (err) {
                 if (err) throw err;
                 return true;
             });
     },
-    copyOriginToData : function(args) {
-        ncp(args.originDirectory, Handbag.settings.currentPath 
-        + '/' + args.bagName  + '/data', function(err) {
+    copyOriginToData: function (args) {
+        ncp(args.originDirectory, Gladstone.settings.currentPath + '/' + args.bagName + '/data', function (err) {
             if (err) throw err;
-            
-            Handbag.createManifest(Handbag.settings.currentPath + '/' + args.bagName  + '/data', args);
+
+            Gladstone.createManifest(Gladstone.settings.currentPath + '/' + args.bagName + '/data', args);
             return true;
         });
     },
     createManifest: function (myPath, args) {
-  
+
         recursive(myPath, function (err, files) {
-           
+
             files.forEach(function (file) {
-                var hash = crypto.createHash(Handbag.settings.cryptoMethod);
+                var hash = crypto.createHash(Gladstone.settings.cryptoMethod);
                 var stats = fs.stat(file, function (err, stat) {
 
                     if (stat.isDirectory()) {
 
                     } else {
-                    
-                        var manifestFileName = Handbag.settings.currentPath + '/' + args.bagName + '/' + 'manifest_' + Handbag.settings.cryptoMethod +  '.txt';
+
+                        var manifestFileName = Gladstone.settings.currentPath + '/' + args.bagName + '/' + 'manifest-' + Gladstone.settings.cryptoMethod + '.txt';
                         var stream = fs.createReadStream(file);
 
                         stream.on('data', function (data) {
-                            hash.update(data, 'utf8'); 
+                            hash.update(data, 'utf8');
                         });
 
                         stream.on('end', function () {
                             var myHash = hash.digest('hex');
-                            var fileName = file.replace(Handbag.settings.currentPath,'')
+                            var fileName = file.replace(Gladstone.settings.currentPath, '')
                                 .replace(args.bagName, '')
-                                .replace(/\\\\/g,'')
-                                .replace(/\\/g,'/');
+                                .replace(/\\\\/g, '')
+                                .replace(/\//g, '/');
                             var manifestLine = fileName + ' ' + myHash + '\n';
-                            fs.appendFile(manifestFileName,manifestLine, function(err) {
+                            fs.appendFile(manifestLine, manifestFileName, function (err) {
                                 if (err) throw err;
                             });
-                                
-                      
+
+
                         });
                     }
 
@@ -124,6 +119,7 @@ var Handbag = {
 
 };
 
-var myArgs = Handbag.processArgs(process.argv);
-Handbag.createBagDirectory(myArgs);
-module.exports.Handbag = Handbag;
+var myArgs = Gladstone.processArgs(process.argv);
+Gladstone.createBagDirectory(myArgs);
+module.exports.Gladstone = Gladstone;
+
