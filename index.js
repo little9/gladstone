@@ -1,8 +1,11 @@
-var fs = require('fs'),
-    crypto = require('crypto'),
-    path = require('path'),
-    recursive = require('recursive-readdir'),
-    ncp = require('ncp').ncp;
+#!/usr/bin/env node
+
+var crypto = require('crypto');
+var path = require('path');
+var recursive = require('recursive-readdir');
+var ncp = require('ncp').ncp;
+var fs = require('fs');
+
 
 var Gladstone = {
     settings: {
@@ -50,10 +53,10 @@ var Gladstone = {
     },
     createBagDirectory: function (args) {
         console.log(args);
-        fs.mkdir(Gladstone.settings.currentPath + '/' + args.bagName, function (err) {
+        fs.mkdir(args.bagName, function (err) {
             if (err) throw err;
-            console.log('Made' + Gladstone.settings.currentPath + '/' + args.bagName);
-            fs.mkdir(Gladstone.settings.currentPath + '/' + args.bagName + '/data', function (err) {
+            console.log('Made ' + args.bagName);
+            fs.mkdir(args.bagName + '/data', function (err) {
                 if (err) throw err;
                 console.log('Made data directory');
                 Gladstone.writeBagInfo(args);
@@ -64,17 +67,16 @@ var Gladstone = {
         });
     },
     writeBagInfo: function (args) {
-        fs.writeFile(Gladstone.settings.currentPath +
-            '/' + args.bagName + '/' + 'bag-info.txt', Gladstone.bagInfoTxt, function (err) {
+        fs.writeFile(args.bagName + '/' + 'bag-info.txt', Gladstone.bagInfoTxt, function (err) {
                 if (err) throw err;
                 return true;
             });
     },
     copyOriginToData: function (args) {
-        ncp(args.originDirectory, Gladstone.settings.currentPath + '/' + args.bagName + '/data', function (err) {
+        ncp(args.originDirectory, args.bagName + '/data', function (err) {
             if (err) throw err;
 
-            Gladstone.createManifest(Gladstone.settings.currentPath + '/' + args.bagName + '/data', args);
+            Gladstone.createManifest(args.bagName + '/data', args);
             return true;
         });
     },
@@ -90,7 +92,8 @@ var Gladstone = {
 
                     } else {
 
-                        var manifestFileName = Gladstone.settings.currentPath + '/' + args.bagName + '/' + 'manifest-' + Gladstone.settings.cryptoMethod + '.txt';
+                        var manifestFileName = args.bagName + '/' + 'manifest-' + Gladstone.settings.cryptoMethod + '.txt';
+                        console.log(manifestFileName);
                         var stream = fs.createReadStream(file);
 
                         stream.on('data', function (data) {
@@ -99,12 +102,11 @@ var Gladstone = {
 
                         stream.on('end', function () {
                             var myHash = hash.digest('hex');
-                            var fileName = file.replace(Gladstone.settings.currentPath, '')
-                                .replace(args.bagName, '')
+                            var fileName = file
                                 .replace(/\\\\/g, '')
                                 .replace(/\//g, '/');
                             var manifestLine = fileName + ' ' + myHash + '\n';
-                            fs.appendFile(manifestLine, manifestFileName, function (err) {
+                            fs.appendFile(manifestFileName, manifestLine, function (err) {
                                 if (err) throw err;
                             });
 
