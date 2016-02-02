@@ -31,14 +31,14 @@ var Gladstone = {
 
         if (typeof args[2] === 'undefined') {
             console.log(Gladstone.strings.noBagName);
-            process.exit(1);
+          //  process.exit(1);
         } else {
             userArgs.bagName = args[2];
         }
 
         if (typeof args[3] === 'undefined') {
             console.log(Gladstone.strings.noOrigin);
-            process.exit(1);    
+        //    process.exit(1);    
         } else {
             userArgs.originDirectory = args[3];
         }
@@ -108,7 +108,15 @@ var Gladstone = {
                             var fileName = file
                                 .replace(/\\\\/g, '')
                                 .replace(/\//g, '/');
-                            var manifestLine = fileName + ' ' + myHash + '\n';
+                                
+                             var splitName = fileName.split('/data/');
+                             var relName = fileName.replace(splitName[0], '');
+                             
+                             if (relName.substring(0, 1) == '/') { 
+                                relName = relName.substring(1);
+                           }       
+                                 
+                            var manifestLine = relName + ' ' + myHash + '\n';
                             fs.appendFile(manifestFileName, manifestLine, function (err) {
                                 if (err) throw err;
                             });
@@ -127,4 +135,3 @@ var Gladstone = {
 var myArgs = Gladstone.processArgs(process.argv);
 Gladstone.createBagDirectory(myArgs);
 module.exports.Gladstone = Gladstone;
-process.exit(0);
