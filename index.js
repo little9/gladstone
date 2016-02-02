@@ -116,7 +116,7 @@ var Gladstone = {
                                 relName = relName.substring(1);
                            }       
                                  
-                            var manifestLine = relName + ' ' + myHash + '\n';
+                            var manifestLine = myHash  + ' ' +  relName + '\n';
                             fs.appendFile(manifestFileName, manifestLine, function (err) {
                                 if (err) throw err;
                             });
