@@ -31,12 +31,14 @@ var Gladstone = {
 
         if (typeof args[2] === 'undefined') {
             console.log(Gladstone.strings.noBagName);
+            process.exit(1);
         } else {
             userArgs.bagName = args[2];
         }
 
         if (typeof args[3] === 'undefined') {
             console.log(Gladstone.strings.noOrigin);
+            process.exit(1);    
         } else {
             userArgs.originDirectory = args[3];
         }
@@ -78,6 +80,7 @@ var Gladstone = {
 
             Gladstone.createManifest(args.bagName + '/data', args);
             return true;
+            
         });
     },
     createManifest: function (myPath, args) {
@@ -124,4 +127,4 @@ var Gladstone = {
 var myArgs = Gladstone.processArgs(process.argv);
 Gladstone.createBagDirectory(myArgs);
 module.exports.Gladstone = Gladstone;
-
+process.exit(0);
