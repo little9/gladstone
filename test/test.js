@@ -47,6 +47,10 @@ describe('Gladstone', function () {
  
 
       describe('#createBagDirectory', function() {
+          after(function(){
+              deleteFolderRecursive(process.cwd() + '/testbag');
+          });
+          
            it('should make a directory for the bag', function() {  
          return Gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
                       originDirectory: process.cwd() + '/test',
