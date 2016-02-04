@@ -18,7 +18,7 @@ var gladstone = require('gladstone');
 
 
 gladstone.createBagDirectory (  { bagName: '/path/to/new/bag',
-                                  originDirectory: /path/to/dir/to/bag', 
+                                  originDirectory: /path/to/dir/to/bag',
                                   cryptoMethod: 'md5'});
 ```
 
