@@ -44,48 +44,19 @@ describe('Gladstone', function () {
           assert.equal(manifestFileName, 'testbag/manifest-md5.txt');
         });
     });
-  
-      describe('#createBagDirectory', function () {
-          
-          
-      Gladstone.createBagDirectory(
-                    { bagName: process.cwd() + '/testbag',
+ 
+
+      describe('#createBagDirectory', function() {
+           it('should make a directory for the bag', function() {  
+         return Gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
                       originDirectory: process.cwd() + '/test',
-                      cryptoMethod: 'md5'});
-                      
-        it('should create a directory for the bag', function () {
-            fs.stat(process.cwd() + '/testbag', function(err, stats) {
-                assert.equal(stats.isDirectory(), true);
-                
-            });
-        });
-                            
-       it('should create a manifest for the bag', function () {
-            fs.stat(process.cwd() + '/testbag/manifest-md5.txt', function(err, stats) {
-                assert.equal(stats.isFile(), true);
-                
-            });
-        });
-        
-          it('should create a bag-info for the bag', function () {
-            fs.stat(process.cwd() + '/testbag/bag-info.txt', function(err, stats) {
-                assert.equal(stats.isFile(), true); 
-            });
-        });
-        
-             it('should have test.gif in the bag', function () {
-            fs.stat(process.cwd() + '/testbag/data/test.gif', function(err, stats) {
-                assert.equal(stats.isFile(), true); 
-            });
-        });
-        
-                     it('should have the correct md5 checksum for test.gif in the bag', function () {    
-                    fs.stat(process.cwd() + '/testbag/data/test.gif', function(err, stats) {
-                assert.equal(stats.isFile(), true); 
-            });
-                     });
-        
-    });
+                      cryptoMethod: 'md5'}).then(function(result) { 
+                assert.equal(fs.statSync(process.cwd() + '/testbag').isDirectory(), true);   
+                assert.equal(fs.statSync(process.cwd() + '/testbag/bag-info.txt').isFile(), true);  
+                assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);               
+                assert.equal(fs.statSync(process.cwd() + '/testbag/data/test.gif').isFile(),true);
+                    });
+           });
+      });    
+    
 });
-
-
