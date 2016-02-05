@@ -43,24 +43,22 @@ module.exports = {
 
         var userArgs = {};
 
-        if (typeof args[2] === 'undefined') {
+        if (args.bagName) {
+            userArgs.bagName = args.bagName;
+        } else {
             console.log(module.exports.strings.noBagName);
-
-        } else {
-            userArgs.bagName = args[2];
         }
 
-        if (typeof args[3] === 'undefined') {
+        if (args.originDirectory) {
+            userArgs.originDirectory = args.originDirectory;
+        } else {
             console.log(module.exports.strings.noOrigin);
-        } else {
-            userArgs.originDirectory = args[3];
         }
 
-        if (typeof args[3] === 'undefined') {
-            console.log(module.exports.strings.noCryptoMethod);
-            userArgs.cryptoMethod = 'md5';
+        if (args.cryptoMethod) {
+            userArgs.cryptoMethod = args.cryptoMethod;
         } else {
-            userArgs.cryptoMethod = args[4];
+            userArgs.cryptoMethod = 'md5';
         }
 
         return userArgs;
