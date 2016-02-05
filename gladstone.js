@@ -51,19 +51,23 @@ module.exports = {
         return userArgs;
     },
     createBagDirectory: function (args) {
-        
-        fs.mkdir(args.bagName, function (err) {
-            if (err) throw err;
-            console.log('Made ' + args.bagName);
-            fs.mkdir(args.bagName + '/data', function (err) {
+        return new Promise(function (resolve, reject) {
+            fs.mkdir(args.bagName, function (err) {
                 if (err) throw err;
-                console.log('Made data directory');
-                module.exports.writeBagInfo(args);
-                module.exports.copyOriginToData(args);
+                console.log('Made ' + args.bagName);
+                fs.mkdir(args.bagName + '/data', function (err) {
+                    if (err) throw err;
+                    console.log('Made data directory');
+                    module.exports.writeBagInfo(args);
+                    module.exports.copyOriginToData(args);
+                    setTimeout(function () {
+                        resolve(true);
+                    }, 200);
+                });
 
             });
-
         });
+
     },
     writeBagInfo: function (args) {
         fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt, function (err) {
@@ -97,34 +101,38 @@ module.exports = {
 
        return manifestFileName;
     },
-    createManifest: function (myPath, args) {
+    createFileHash: function (file, args) {
+        var hash = crypto.createHash(module.exports.settings.cryptoMethod);
+        var stats = fs.stat(file, function (err, stat) {
+            if (!stat.isDirectory()) {
+                var stream = fs.createReadStream(file);
+                stream.on('data', function (data) {
+                    hash.update(data, 'utf8');
+                });
+
+                stream.on('end', function () {
+                    var myHash = hash.digest('hex');
+                    module.exports.appendHashtoManifest(myHash, file, args)
+                });
+            }
+        });
+    },
+    appendHashtoManifest: function (hash, file,args) {
+        var manifestFileName = module.exports.getManifestFileName(args.bagName, module.exports.settings.cryptoMethod);
+        var relName = module.exports.getRelativePath(file);
+        var manifestLine = hash + ' ' + relName + '\n';
+        fs.appendFile(manifestFileName, manifestLine, function (err) {
+            if (err) throw err;
+        });
+    },
+    createManifest : function (myPath, args) {
         console.log('Creaing manifest');
         recursive(myPath, function (err, files) {
             files.forEach(function (file) {
-                var hash = crypto.createHash(module.exports.settings.cryptoMethod);
-                var stats = fs.stat(file, function (err, stat) {
-                   
-                    if (!stat.isDirectory()) {
-                        var manifestFileName = module.exports.getManifestFileName(args.bagName, module.exports.settings.cryptoMethod);            
-                        var stream = fs.createReadStream(file);
-
-                        stream.on('data', function (data) {
-                            hash.update(data, 'utf8');
-                        });
-
-                        stream.on('end', function () {
-                            var myHash = hash.digest('hex');
-                            var relName = module.exports.getRelativePath(file);
-                            var manifestLine = myHash + ' ' + relName + '\n';
-                            fs.appendFile(manifestFileName, manifestLine, function (err) {
-                                if (err) throw err;
-                            });
-                        });
-     
-                    }
+                module.exports.createFileHash(file,args);
                 });
             });
-        });
+       
     }
 
 };

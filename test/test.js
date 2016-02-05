@@ -57,6 +57,7 @@ describe('Gladstone', function () {
                       cryptoMethod: 'md5'}).then(function(result) { 
                 assert.equal(fs.statSync(process.cwd() + '/testbag').isDirectory(), true);   
                 assert.equal(fs.statSync(process.cwd() + '/testbag/bag-info.txt').isFile(), true);  
+             //   assert.equal(fs.statSync(process.cwd() + '/testbag/tagmanifest-md5.txt').isFile(), true);  
                 assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);               
                 assert.equal(fs.statSync(process.cwd() + '/testbag/data/test.gif').isFile(),true);
                     });
