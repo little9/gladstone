@@ -11,4 +11,23 @@ gladstone <bag_name> <source_bag> <hashing_method>
 gladstone ~/bagname ~/sourcebag md5 
 ```
 
+To use the library:
 
+```javascript 
+var gladstone = require('gladstone');
+
+
+gladstone.createBagDirectory (  { bagName: '/path/to/new/bag',
+                                  originDirectory: '/path/to/dir/to/bag',
+                                  cryptoMethod: 'md5'});
+```
+
+The library returns a promise:
+
+```javascript 
+  return gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
+                      originDirectory: process.cwd() + '/test',
+                      cryptoMethod: 'md5'}).then(function(result) { 
+                      console.log("Done making the bag");
+                      });
+```
