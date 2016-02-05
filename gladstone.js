@@ -1,4 +1,3 @@
-
 var crypto = require('crypto');
 var path = require('path');
 var recursive = require('recursive-readdir');
@@ -11,6 +10,22 @@ module.exports = {
         currentPath: process.cwd(),
         bagName: '',
         originDirectory: ''
+    },
+    bagInfoMetadata: {
+        "Source-Organization": "",
+        "Organization-Address": "",
+        "Contact-Name": "",
+        "Contact-Phone": "",
+        "Contact-Email": "",
+        "External-Description": "",
+        "Bagging-Date": "",
+        "External-Identifier": "",
+        "Bag-Size": "",
+        "Payload-Oxum": "",
+        "Bag-Group-Identifier": "",
+        "Bag-Count": "",
+        "Internal-Sender-Identifier": "",
+        "Internal-Sender-Description": ""
     },
     userArgs: {
         bagName: '',
@@ -47,7 +62,7 @@ module.exports = {
         } else {
             userArgs.cryptoMethod = args[4];
         }
-        
+
         return userArgs;
     },
     createBagDirectory: function (args) {
@@ -81,7 +96,7 @@ module.exports = {
             if (err) throw err;
             console.log("Creating manifest");
             module.exports.createManifest(args.bagName + '/data', args);
-        
+
 
         });
     },
@@ -93,13 +108,13 @@ module.exports = {
         if (relName.substring(0, 1) == '/') {
             relName = relName.substring(1);
         }
-        
+
         return relName;
     },
-    getManifestFileName: function(bagName, cryptoMethod) {
-       var manifestFileName = bagName + '/' + 'manifest-' + module.exports.settings.cryptoMethod + '.txt';
+    getManifestFileName: function (bagName, cryptoMethod) {
+        var manifestFileName = bagName + '/' + 'manifest-' + module.exports.settings.cryptoMethod + '.txt';
 
-       return manifestFileName;
+        return manifestFileName;
     },
     createFileHash: function (file, args) {
         var hash = crypto.createHash(module.exports.settings.cryptoMethod);
@@ -117,7 +132,7 @@ module.exports = {
             }
         });
     },
-    appendHashtoManifest: function (hash, file,args) {
+    appendHashtoManifest: function (hash, file, args) {
         var manifestFileName = module.exports.getManifestFileName(args.bagName, module.exports.settings.cryptoMethod);
         var relName = module.exports.getRelativePath(file);
         var manifestLine = hash + ' ' + relName + '\n';
@@ -125,14 +140,14 @@ module.exports = {
             if (err) throw err;
         });
     },
-    createManifest : function (myPath, args) {
+    createManifest: function (myPath, args) {
         console.log('Creaing manifest');
         recursive(myPath, function (err, files) {
             files.forEach(function (file) {
-                module.exports.createFileHash(file,args);
-                });
+                module.exports.createFileHash(file, args);
             });
-       
+        });
+
     }
 
 };
