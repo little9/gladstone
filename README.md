@@ -1,8 +1,11 @@
 # :handbag: Gladstone :handbag: 
 
-This is a node.js module for creating BagIt archives. 
+This is a node module for creating [BagIt archives](https://en.wikipedia.org/wiki/BagIt). 
 
-To use it from the command-line you provide a source directory that you want want to create a BagIt archive for, a name for the bag, and a hashing algorithm (typically md5 or sha1).
+The goal of the project is to implement the complete [BagIt 0.97](https://tools.ietf.org/html/draft-kunze-bagit-08) specification. 
+
+To use it from the command-line you provide a source directory that you want want to create a BagIt archive for, a name for the bag, and a hashing algorithm.
+
 ``` bash
 gladstone <bag_name> <source_bag> <hashing_method>
 ```
@@ -11,7 +14,7 @@ gladstone <bag_name> <source_bag> <hashing_method>
 gladstone ~/bagname ~/sourcebag md5 
 ```
 
-To use the library:
+It can also be used as library in other node applications:
 
 ```javascript 
 var gladstone = require('gladstone');
@@ -30,4 +33,5 @@ The library returns a promise:
                       cryptoMethod: 'md5'}).then(function(result) { 
                       console.log("Done making the bag");
                       });
+                    
 ```
