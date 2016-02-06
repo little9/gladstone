@@ -20,12 +20,14 @@ module.exports = {
         "External-Description": "",
         "Bagging-Date": "",
         "External-Identifier": "",
+        "Internal-Sender-Identifier": "",
+        "Internal-Sender-Description": ""
+    },
+    bagInfoTechMetadata: {
         "Bag-Size": "",
         "Payload-Oxum": "",
         "Bag-Group-Identifier": "",
         "Bag-Count": "",
-        "Internal-Sender-Identifier": "",
-        "Internal-Sender-Description": ""
     },
     userArgs: {
         bagName: '',
@@ -61,6 +63,46 @@ module.exports = {
             userArgs.cryptoMethod = 'md5';
         }
 
+        if (args.sourceOrganization) {
+            module.exports.bagInfoMetadata["Source-Organization"] = args.sourceOrganization
+        }
+
+        if (args.organizationAddress) {
+            module.exports.bagInfoMetadata["Organization-Address"] = args.organizationAddress
+        }
+
+        if (args.contactName) {
+            module.exports.bagInfoMetadata["Contact-Name"] = args.contactName
+        }
+
+        if (args.contactPhone) {
+            module.exports.bagInfoMetadata["Contact-Phone"] = args.contactPhone
+        }
+
+        if (args.contactEmail) {
+            module.exports.bagInfoMetadata["Contact-Email"] = args.contactEmail
+        }
+
+        if (args.externalDescription) {
+            module.exports.bagInfoMetadata["External-Description"] = args.externalDescription
+        }
+
+        if (args.baggingDate) {
+            module.exports.bagInfoMetadata["Bagging-Date"] = args.baggingDate
+        }
+
+        if (args.externalIdentifier) {
+            module.exports.bagInfoMetadata["External-Identifier"] = args.externalIdentifier
+        }
+
+        if (args.internalSenderIdentifier) {
+            module.exports.bagInfoMetadata["Internal-Sender-Identifier"] = args.internalSenderIdentifier
+        }
+
+        if (args.internalSenderDescription) {
+            module.exports.bagInfoMetadata["Internal-Sender-Description"] = args.internalSenderDescription
+        }
+
         return userArgs;
     },
     createBagDirectory: function (args) {
@@ -82,11 +124,19 @@ module.exports = {
         });
 
     },
-    writeBagInfo: function (args) {
-        fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt, function (err) {
+    writeBagInfo: function (args,bagInfoMetadata) {
+        fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt + "\n", function (err) {
             if (err) throw err;
-
         });
+
+        for (var i in module.exports.bagInfoMetadata) {
+            if(module.exports.bagInfoMetadata[i]) {
+                fs.appendFile(args.bagName + '/' + 'bag-info.txt', i + ": " + module.exports.bagInfoMetadata[i] + "\n", function (err) {
+                    if (err) throw err;
+                });
+            }
+        }
+
     },
     copyOriginToData: function (args) {
         console.log("Copying data into bag");
