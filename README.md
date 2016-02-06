@@ -10,7 +10,14 @@ To use it from the command-line you provide a source directory that you want wan
 gladstone --bagName ~/bagname --originDirectory ~/source --cryptoMethod md5 
 ```
 
-It can also be used as library in other node applications:
+The BagIt specification has some optional metadata fields that can be present in the bag-info.txt file. These optional fields can
+be passed on the command line:
+
+```bash
+gladstone --bagName ~/bagname --originDirectory ~/source --cryptoMethod md5 --sourceOrganization "Your Org"
+```
+
+You can also use gladstone in other node applications by passing the createBagDirectory function a JSON object:
 
 ```javascript 
 var gladstone = require('gladstone');
@@ -21,7 +28,7 @@ gladstone.createBagDirectory (  { bagName: '/path/to/new/bag',
                                   cryptoMethod: 'md5'});
 ```
 
-The library returns a promise:
+The function returns a promise that can be used to trigger behaviour after the bag has been made:
 
 ```javascript 
   return gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
