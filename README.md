@@ -6,12 +6,8 @@ The goal of the project is to implement the complete [BagIt 0.97](https://tools.
 
 To use it from the command-line you provide a source directory that you want want to create a BagIt archive for, a name for the bag, and a hashing algorithm.
 
-``` bash
-gladstone <bag_name> <source_bag> <hashing_method>
-```
-
 ```bash
-gladstone ~/bagname ~/sourcebag md5 
+gladstone --bagName ~/bagname --originDirectory ~/source --cryptoMethod md5 
 ```
 
 It can also be used as library in other node applications:
