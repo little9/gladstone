@@ -1,5 +1,7 @@
 # :handbag: Gladstone :handbag: 
 
+[![Build Status](https://travis-ci.org/little9/gladstone.svg?branch=master)](https://travis-ci.org/little9/gladstone)
+
 This is a node module for creating [BagIt archives](https://en.wikipedia.org/wiki/BagIt). 
 
 The goal of the project is to implement the complete [BagIt 0.97](https://tools.ietf.org/html/draft-kunze-bagit-08) specification. 
