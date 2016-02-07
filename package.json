@@ -3,30 +3,31 @@
     "version": "0.1.14",
     "description": "Command line utility for creating BagIt archives.",
     "main": "index.js",
-    "repository" : "https://github.com/little9/gladstone",
+    "repository": "https://github.com/little9/gladstone",
     "scripts": {
-	"test": "mocha test"
+        "test": "mocha test"
     },
     "bin": {
-	"gladstone": "index.js"
+        "gladstone": "index.js"
     },
     "preferGlobal": true,
     "keywords": [
-	"bagit",
-	"loc",
-	"bag",
-	"bagging",
-	"digital",
-	"preservation"
+        "bagit",
+        "loc",
+        "bag",
+        "bagging",
+        "digital",
+        "preservation"
     ],
     "author": "Jamie Little",
     "license": "NCSA",
     "devDependencies": {
-	"should": "^7.1.1"
+        "mocha": "2.4.5",
+        "should": "^7.1.1"
     },
-    "dependencies" : {
-	"recursive-readdir" : "latest",
-	"ncp" : "latest", "yargs" : "latest"
-
+    "dependencies": {
+        "recursive-readdir": "latest",
+        "ncp": "latest",
+        "yargs": "latest"
     }
 }
