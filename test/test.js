@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    Gladstone = require('./../gladstone.js');
+    gladstone = require('./../gladstone.js');
     fs = require('fs');
   
  // Required to clean up after tests  
@@ -19,12 +19,15 @@ var assert = require('assert'),
     }
 };   
     
-describe('Gladstone', function () {
+describe('gladstone', function () {
     describe('#processArgs', function () {
         it('should return an object with the bag name and the origin directory when given command line args', function () {
+           var args = {
+                bagName : "./testbag",
+                originDirectory : "./"
+            }
 
-            var args = ['node', 'index.js', './testbag', './'];
-            var myArgs = Gladstone.processArgs(args);
+            var myArgs = gladstone.processArgs(args);
             
             assert.equal(myArgs.bagName, './testbag');
             assert.equal(myArgs.originDirectory, './');
@@ -33,14 +36,14 @@ describe('Gladstone', function () {
 
  describe('#getRelativePath', function () {
         it('should return a path for the file relative to the bag', function () {
-           var relPath = Gladstone.getRelativePath('/home/example/bag/data/image.tif');
+           var relPath = gladstone.getRelativePath('/home/example/bag/data/image.tif');
            assert.equal(relPath, 'data/image.tif'); 
         });
     });
     
     describe('#getManifestFileName', function () {
         it('should return a filename for the manifest based on the bagname and the hashing method', function () {
-          var manifestFileName = Gladstone.getManifestFileName('testbag', 'md5');
+          var manifestFileName = gladstone.getManifestFileName('testbag', 'md5', 'manifest');
           assert.equal(manifestFileName, 'testbag/manifest-md5.txt');
         });
     });
@@ -52,13 +55,13 @@ describe('Gladstone', function () {
           });
           
            it('should make a directory for the bag', function() {  
-         return Gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
+         return gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
                       originDirectory: process.cwd() + '/test',
-                      cryptoMethod: 'md5'}).then(function(result) { 
+                      cryptoMethod: 'md5'}).then(function(result) {
                 assert.equal(fs.statSync(process.cwd() + '/testbag').isDirectory(), true);   
                 assert.equal(fs.statSync(process.cwd() + '/testbag/bag-info.txt').isFile(), true);  
-             //   assert.equal(fs.statSync(process.cwd() + '/testbag/tagmanifest-md5.txt').isFile(), true);  
-                assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);               
+             //   assert.equal(fs.statSync(process.cwd() + '/testbag/tagmanifest-md5.txt').isFile(), true);
+                assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);
                 assert.equal(fs.statSync(process.cwd() + '/testbag/data/test.gif').isFile(),true);
                     });
            });
