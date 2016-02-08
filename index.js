@@ -4,5 +4,7 @@ var gladstone = require('./gladstone.js');
 var argv = require('yargs').argv;
 
 var myArgs = gladstone.processArgs(argv);
-gladstone.createBagDirectory(myArgs);
-console.log(myArgs);
+
+gladstone.createBagDirectory(myArgs).then (function (result) {
+    process.exit(0);
+});

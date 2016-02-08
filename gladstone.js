@@ -38,11 +38,22 @@ module.exports = {
         noBagName: 'Please specify a bag name',
         noOrigin: 'Please specify an origin directory name',
         bagInfoTxt: 'BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8',
+        writingManifest: 'Creating manifest: ',
+        createdBag: "Creating bag directory: ",
+        createdData: "Creating data directory: ",
+        createdBagInfo: "Creating bag info file: ",
         manifestArray: []
     },
-
+    errorStrings: {
+        errorCopying: "There was an error copying the origin directory into the bag.",
+        errorBagCreation: "There was an error making the directory for the new bag.",
+        errorBagInfo: "There an error making the bag-info.txt file.",
+        errorManifest: "There was an error creating the manifest file."
+    },
     processArgs: function (args) {
-
+        /**
+         * Function to process command line arguments or an object passed manually
+         */
         var userArgs = {};
 
         if (args.bagName) {
@@ -108,14 +119,18 @@ module.exports = {
     createBagDirectory: function (args) {
         return new Promise(function (resolve, reject) {
             fs.mkdir(args.bagName, function (err) {
-                if (err) throw err;
-                console.log('Made ' + args.bagName);
+                if (err) {
+                    console.error(module.exports.errorStrings.errorBagCreation);
+                    process.exit(1);
+                }
+
+                console.log(module.exports.strings.createdBag + args.bagName);
                 fs.mkdir(args.bagName + '/data', function (err) {
                     if (err) throw err;
-                    console.log('Made data directory');
+                    console.log(module.exports.strings.createdData + '/data');
                     module.exports.writeBagInfo(args);
                     module.exports.copyOriginToData(args);
-                    
+
                     setTimeout(function () {
                         resolve(true);
                     }, 200);
@@ -125,25 +140,35 @@ module.exports = {
         });
 
     },
-    writeBagInfo: function (args,bagInfoMetadata) {
+    writeBagInfo: function (args, bagInfoMetadata) {
         fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt + "\n", function (err) {
-            if (err) throw err;
+            if (err) {
+                return console.error(module.exports.errorStrings.errorBagInfo);
+                process.exit(1);
+            }
+            console.log(module.exports.strings.createdBagInfo + args.bagName + '/' + 'bag-info.txt');
         });
 
         for (var i in module.exports.bagInfoMetadata) {
-            if(module.exports.bagInfoMetadata[i]) {
+            if (module.exports.bagInfoMetadata[i]) {
                 fs.appendFile(args.bagName + '/' + 'bag-info.txt', i + ": " + module.exports.bagInfoMetadata[i] + "\n", function (err) {
-                    if (err) throw err;
+                    if (err) {
+                        return console.error(module.exports.errorStrings.errorBagInfo);
+                        process.exit(1);
+                    }
                 });
             }
         }
 
     },
     copyOriginToData: function (args) {
-        console.log("Copying data into bag");
+
         ncp(args.originDirectory, args.bagName + '/data', function (err) {
-            if (err) throw err;
-            console.log("Creating manifest");
+            if (err) {
+                return console.error(module.exports.errorStrings.errorCopying);
+                process.exit(1);
+            }
+
             module.exports.createManifest(args.bagName + '/data', args, 'manifest');
 
 
@@ -160,20 +185,23 @@ module.exports = {
 
         return relName;
     },
-     createManifest: function (myPath, args, type) {
+    /**
+     * Functions for creating the manifest file.
+     */
+    createManifest: function (myPath, args, type) {
         // 1 Recurse through the path provided and run the createFileHash function on all the files
         var manifestFileName = module.exports.getManifestFileName(args.bagName, module.exports.settings.cryptoMethod, type);
-        console.log('Creaing manifest');
+        console.log(module.exports.strings.writingManifest + manifestFileName);
         if (type === 'manifest') {
-        recursive(myPath, function (err, files) {
-            files.forEach(function (file) {
-                module.exports.createFileHash(file, args, manifestFileName);
+            recursive(myPath, function (err, files) {
+                files.forEach(function (file) {
+                    module.exports.createFileHash(file, args, manifestFileName);
+                });
             });
-        });
-        } 
-       
-    }, 
-      createFileHash: function (file, args, manifestFileName) {
+        }
+
+    },
+    createFileHash: function (file, args, manifestFileName) {
         // 2 Create a hash for the provided file path and send the results to the appendHashtoManifest function
         var hash = crypto.createHash(module.exports.settings.cryptoMethod);
         var stats = fs.stat(file, function (err, stat) {
@@ -189,21 +217,25 @@ module.exports = {
             }
         });
     },
-     appendHashtoManifest: function (hash, file, manifestFileName, args) {
+    appendHashtoManifest: function (hash, file, manifestFileName, args) {
         // 3 Append the combined hash and filename to the manifest file returned by the getManifestFileName function
         var relName = module.exports.getRelativePath(file);
         var manifestLine = hash + ' ' + relName + '\n';
         fs.appendFile(manifestFileName, manifestLine, function (err) {
-            if (err) throw err;
+            if (err) {
+                return console.error(module.exports.errorStrings.errorManifest);
+                process.exit(1);
+            }
         });
     },
     getManifestFileName: function (bagName, cryptoMethod, type) {
         // 4 Get the full path of the manifest file
-        var manifestFileName = bagName + '/' + type + '-' + module.exports.settings.cryptoMethod + '.txt';       
+        
+        var manifestFileName = bagName + '/' + type + '-' + module.exports.settings.cryptoMethod + '.txt';
         return manifestFileName;
     }
-  
-   
+
+
 
 };
 
