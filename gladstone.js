@@ -121,7 +121,6 @@ module.exports = {
             fs.mkdir(args.bagName, function (err) {
                 if (err) {
                     console.error(module.exports.errorStrings.errorBagCreation);
-                    process.exit(1);
                 }
 
                 console.log(module.exports.strings.createdBag + args.bagName);
@@ -144,7 +143,6 @@ module.exports = {
         fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt + "\n", function (err) {
             if (err) {
                 return console.error(module.exports.errorStrings.errorBagInfo);
-                process.exit(1);
             }
             console.log(module.exports.strings.createdBagInfo + args.bagName + '/' + 'bag-info.txt');
         });
@@ -154,7 +152,6 @@ module.exports = {
                 fs.appendFile(args.bagName + '/' + 'bag-info.txt', i + ": " + module.exports.bagInfoMetadata[i] + "\n", function (err) {
                     if (err) {
                         return console.error(module.exports.errorStrings.errorBagInfo);
-                        process.exit(1);
                     }
                 });
             }
@@ -166,7 +163,6 @@ module.exports = {
         ncp(args.originDirectory, args.bagName + '/data', function (err) {
             if (err) {
                 return console.error(module.exports.errorStrings.errorCopying);
-                process.exit(1);
             }
 
             module.exports.createManifest(args.bagName + '/data', args, 'manifest');
@@ -224,7 +220,6 @@ module.exports = {
         fs.appendFile(manifestFileName, manifestLine, function (err) {
             if (err) {
                 return console.error(module.exports.errorStrings.errorManifest);
-                process.exit(1);
             }
         });
     },
