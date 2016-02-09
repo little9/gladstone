@@ -1,7 +1,8 @@
 var assert = require('assert'),
     gladstone = require('./../gladstone.js');
     fs = require('fs');
-  
+    lastdirpath = require('../lib/lastdirpath');
+    
  // Required to clean up after tests  
  deleteFolderRecursive = function(path) {
     var files = [];
@@ -66,5 +67,14 @@ describe('gladstone', function () {
                     });
            });
       });    
+    
+    describe('#lastDirPath' , function() {
+       
+       it('should return the last directory in path', function() {
+           var lastpath = lastdirpath.getLastDirPath('/var/www/html/path');
+           assert.equal(lastpath, '/var/www/html/path/');
+       });
+        
+    });
     
 });

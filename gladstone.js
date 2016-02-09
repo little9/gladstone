@@ -3,53 +3,14 @@ var path = require('path');
 var recursive = require('recursive-readdir');
 var ncp = require('ncp').ncp;
 var fs = require('fs');
+var gladstone = exports;
+
+var strings = require('./lib/strings');
+var bagInfo = require('./lib/bag-info');
+var settings = require('./lib/settings');
+var lastdirpath = require('./lib/lastdirpath');
 
 module.exports = {
-    settings: {
-        cryptoMethod: 'md5',
-        currentPath: process.cwd(),
-        bagName: '',
-        originDirectory: ''
-    },
-    bagInfoMetadata: {
-        "Source-Organization": "",
-        "Organization-Address": "",
-        "Contact-Name": "",
-        "Contact-Phone": "",
-        "Contact-Email": "",
-        "External-Description": "",
-        "Bagging-Date": "",
-        "External-Identifier": "",
-        "Internal-Sender-Identifier": "",
-        "Internal-Sender-Description": ""
-    },
-    bagInfoTechMetadata: {
-        "Bag-Size": "",
-        "Payload-Oxum": "",
-        "Bag-Group-Identifier": "",
-        "Bag-Count": "",
-    },
-    userArgs: {
-        bagName: '',
-        originDirectory: '',
-        cryptoMethod: ''
-    },
-    strings: {
-        noBagName: 'Please specify a bag name',
-        noOrigin: 'Please specify an origin directory name',
-        bagInfoTxt: 'BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8',
-        writingManifest: 'Creating manifest: ',
-        createdBag: "Creating bag directory: ",
-        createdData: "Creating data directory: ",
-        createdBagInfo: "Creating bag info file: ",
-        manifestArray: []
-    },
-    errorStrings: {
-        errorCopying: "There was an error copying the origin directory into the bag.",
-        errorBagCreation: "There was an error making the directory for the new bag.",
-        errorBagInfo: "There an error making the bag-info.txt file.",
-        errorManifest: "There was an error creating the manifest file."
-    },
     processArgs: function (args) {
         /**
          * Function to process command line arguments or an object passed manually
@@ -59,13 +20,13 @@ module.exports = {
         if (args.bagName) {
             userArgs.bagName = args.bagName;
         } else {
-            console.log(module.exports.strings.noBagName);
+            console.log(strings.noBagName);
         }
 
         if (args.originDirectory) {
             userArgs.originDirectory = args.originDirectory;
         } else {
-            console.log(module.exports.strings.noOrigin);
+            console.log(strings.noOrigin);
         }
 
         if (args.cryptoMethod) {
@@ -75,43 +36,43 @@ module.exports = {
         }
 
         if (args.sourceOrganization) {
-            module.exports.bagInfoMetadata["Source-Organization"] = args.sourceOrganization
+            bagInfo["Source-Organization"] = args.sourceOrganization
         }
 
         if (args.organizationAddress) {
-            module.exports.bagInfoMetadata["Organization-Address"] = args.organizationAddress
+            bagInfo["Organization-Address"] = args.organizationAddress
         }
 
         if (args.contactName) {
-            module.exports.bagInfoMetadata["Contact-Name"] = args.contactName
+            bagInfo["Contact-Name"] = args.contactName
         }
 
         if (args.contactPhone) {
-            module.exports.bagInfoMetadata["Contact-Phone"] = args.contactPhone
+            bagInfo["Contact-Phone"] = args.contactPhone
         }
 
         if (args.contactEmail) {
-            module.exports.bagInfoMetadata["Contact-Email"] = args.contactEmail
+            bagInfo["Contact-Email"] = args.contactEmail
         }
 
         if (args.externalDescription) {
-            module.exports.bagInfoMetadata["External-Description"] = args.externalDescription
+            bagInfo["External-Description"] = args.externalDescription
         }
 
         if (args.baggingDate) {
-            module.exports.bagInfoMetadata["Bagging-Date"] = args.baggingDate
+            bagInfo["Bagging-Date"] = args.baggingDate
         }
 
         if (args.externalIdentifier) {
-            module.exports.bagInfoMetadata["External-Identifier"] = args.externalIdentifier
+            bagInfo["External-Identifier"] = args.externalIdentifier
         }
 
         if (args.internalSenderIdentifier) {
-            module.exports.bagInfoMetadata["Internal-Sender-Identifier"] = args.internalSenderIdentifier
+            bagInfo["Internal-Sender-Identifier"] = args.internalSenderIdentifier
         }
 
         if (args.internalSenderDescription) {
-            module.exports.bagInfoMetadata["Internal-Sender-Description"] = args.internalSenderDescription
+            bagInfo["Internal-Sender-Description"] = args.internalSenderDescription
         }
 
         return userArgs;
@@ -120,13 +81,13 @@ module.exports = {
         return new Promise(function (resolve, reject) {
             fs.mkdir(args.bagName, function (err) {
                 if (err) {
-                    console.error(module.exports.errorStrings.errorBagCreation);
+                    console.error(strings.errorBagCreation);
                 }
 
-                console.log(module.exports.strings.createdBag + args.bagName);
+                console.log(strings.createdBag + args.bagName);
                 fs.mkdir(args.bagName + '/data', function (err) {
                     if (err) throw err;
-                    console.log(module.exports.strings.createdData + '/data');
+                    console.log(strings.createdData + '/data');
                     module.exports.writeBagInfo(args);
                     module.exports.copyOriginToData(args);
 
@@ -140,18 +101,18 @@ module.exports = {
 
     },
     writeBagInfo: function (args, bagInfoMetadata) {
-        fs.writeFile(args.bagName + '/' + 'bag-info.txt', module.exports.strings.bagInfoTxt + "\n", function (err) {
+        fs.writeFile(args.bagName + '/' + 'bag-info.txt', strings.bagInfoTxt + "\n", function (err) {
             if (err) {
-                return console.error(module.exports.errorStrings.errorBagInfo);
+                return console.error(strings.errorBagInfo);
             }
-            console.log(module.exports.strings.createdBagInfo + args.bagName + '/' + 'bag-info.txt');
+            console.log(strings.createdBagInfo + args.bagName + '/' + 'bag-info.txt');
         });
 
-        for (var i in module.exports.bagInfoMetadata) {
-            if (module.exports.bagInfoMetadata[i]) {
-                fs.appendFile(args.bagName + '/' + 'bag-info.txt', i + ": " + module.exports.bagInfoMetadata[i] + "\n", function (err) {
+        for (var i in bagInfo) {
+            if (bagInfo[i]) {
+                fs.appendFile(args.bagName + '/' + 'bag-info.txt', i + ": " + bagInfo[i] + "\n", function (err) {
                     if (err) {
-                        return console.error(module.exports.errorStrings.errorBagInfo);
+                        return console.error(strings.errorBagInfo);
                     }
                 });
             }
@@ -159,15 +120,16 @@ module.exports = {
 
     },
     copyOriginToData: function (args) {
-
-        ncp(args.originDirectory, args.bagName + '/data', function (err) {
+        var lastDirPath = lastdirpath.getLastDirPath(args.originDirectory);
+          fs.mkdir(args.bagName + '/data/' + lastDirPath, function (err) {
+                    if (err) throw err;
+          });
+        
+        ncp(args.originDirectory, args.bagName + '/data/' + lastDirPath, function (err) {
             if (err) {
-                return console.error(module.exports.errorStrings.errorCopying);
+                return console.error(strings.errorCopying);
             }
-
             module.exports.createManifest(args.bagName + '/data', args, 'manifest');
-
-
         });
     },
     getRelativePath: function (filePath) {
@@ -186,12 +148,17 @@ module.exports = {
      */
     createManifest: function (myPath, args, type) {
         // 1 Recurse through the path provided and run the createFileHash function on all the files
-        var manifestFileName = module.exports.getManifestFileName(args.bagName, module.exports.settings.cryptoMethod, type);
-        console.log(module.exports.strings.writingManifest + manifestFileName);
+        var manifestFileName = module.exports.getManifestFileName(args.bagName, args.cryptoMethod, type);
+        console.log(strings.writingManifest + manifestFileName);
         if (type === 'manifest') {
             recursive(myPath, function (err, files) {
                 files.forEach(function (file) {
-                    module.exports.createFileHash(file, args, manifestFileName);
+                    if (file.indexOf('.DS_Store') > 0) {
+                        
+                    } else {
+                      module.exports.createFileHash(file, args, manifestFileName);
+                    }
+
                 });
             });
         }
@@ -199,7 +166,7 @@ module.exports = {
     },
     createFileHash: function (file, args, manifestFileName) {
         // 2 Create a hash for the provided file path and send the results to the appendHashtoManifest function
-        var hash = crypto.createHash(module.exports.settings.cryptoMethod);
+        var hash = crypto.createHash(args.cryptoMethod);
         var stats = fs.stat(file, function (err, stat) {
             if (!stat.isDirectory()) {
                 var stream = fs.createReadStream(file);
@@ -219,18 +186,14 @@ module.exports = {
         var manifestLine = hash + ' ' + relName + '\n';
         fs.appendFile(manifestFileName, manifestLine, function (err) {
             if (err) {
-                return console.error(module.exports.errorStrings.errorManifest);
+                return console.error(strings.errorManifest);
             }
         });
     },
     getManifestFileName: function (bagName, cryptoMethod, type) {
         // 4 Get the full path of the manifest file
         
-        var manifestFileName = bagName + '/' + type + '-' + module.exports.settings.cryptoMethod + '.txt';
+        var manifestFileName = bagName + '/' + type + '-' + cryptoMethod + '.txt';
         return manifestFileName;
     }
-
-
-
 };
-
