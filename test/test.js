@@ -2,7 +2,7 @@ var assert = require('assert'),
     gladstone = require('./../gladstone.js');
     fs = require('fs');
     lastdirpath = require('../lib/lastdirpath');
-    
+    processArgs = require('../lib/process-args');
  // Required to clean up after tests  
  deleteFolderRecursive = function(path) {
     var files = [];
@@ -28,7 +28,7 @@ describe('gladstone', function () {
                 originDirectory : "./"
             }
 
-            var myArgs = gladstone.processArgs(args);
+            var myArgs = processArgs(args);
             
             assert.equal(myArgs.bagName, './testbag');
             assert.equal(myArgs.originDirectory, './');
