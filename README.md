@@ -37,16 +37,13 @@ You can also use gladstone in other node applications by passing the createBagDi
 var gladstone = require('gladstone');
 
 gladstone.createBagDirectory({ bagName: '/path/to/new/bag',
-                                  originDirectory: '/path/to/dir/to/bag',
-                                  cryptoMethod: 'md5'});
-```
-
-The function returns a promise that can be used to trigger behaviour after the bag has been made:
-
-```javascript 
-  gladstone.createBagDirectory({ bagName: process.cwd() + '/testbag',
-                      originDirectory: process.cwd() + '/test',
-                      cryptoMethod: 'md5'}).then(function(result) { 
-                      // Something
-                      });                  
+                               originDirectory: '/path/to/dir/to/bag',
+                               cryptoMethod: 'sha256',
+                               sourceOrganization: 'Example Organization',
+                               organizationAddress: '123 Street',
+                               contactName: 'Contact Name',
+                               contactPhone: '555-555-5555',
+                               contactEmail: 'test@example.org',
+                               externalDescription: 'An example description'
+                            });
 ```
