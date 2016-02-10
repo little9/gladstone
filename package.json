@@ -1,6 +1,6 @@
 {
     "name": "gladstone",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Command line utility for creating BagIt archives.",
     "main": "index.js",
     "repository": "https://github.com/little9/gladstone",

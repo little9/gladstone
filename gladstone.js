@@ -1,30 +1,32 @@
+var gladstone = exports;
+
 var crypto = require('crypto');
 var path = require('path');
 var recursive = require('recursive-readdir');
 var ncp = require('ncp').ncp;
 var fs = require('fs');
-var gladstone = exports;
 
 var strings = require('./lib/strings');
 var bagInfo = require('./lib/bag-info');
 var settings = require('./lib/settings');
 var lastdirpath = require('./lib/lastdirpath');
-
+var processArgs = require('./lib/process-args');
 
 module.exports = {
     createBagDirectory: function (args) {
+         var procArgs = processArgs(args);
         return new Promise(function (resolve, reject) {
             fs.mkdir(args.bagName, function (err) {
                 if (err) {
                     console.error(strings.errorBagCreation);
                 }
 
-                console.log(strings.createdBag + args.bagName);
-                fs.mkdir(args.bagName + '/data', function (err) {
+                console.log(strings.createdBag + procArgs.bagName);
+                fs.mkdir(procArgs.bagName + '/data', function (err) {
                     if (err) throw err;
                     console.log(strings.createdData + '/data');
-                    module.exports.writeBagInfo(args);
-                    module.exports.copyOriginToData(args);
+                    module.exports.writeBagInfo(procArgs);
+                    module.exports.copyOriginToData(procArgs);
 
                     setTimeout(function () {
                         resolve(true);
@@ -56,10 +58,10 @@ module.exports = {
     },
     copyOriginToData: function (args) {
         var lastDirPath = lastdirpath.getLastDirPath(args.originDirectory);
-          fs.mkdir(args.bagName + '/data/' + lastDirPath, function (err) {
-                    if (err) throw err;
-          });
-        
+        fs.mkdir(args.bagName + '/data/' + lastDirPath, function (err) {
+            if (err) throw err;
+        });
+
         ncp(args.originDirectory, args.bagName + '/data/' + lastDirPath, function (err) {
             if (err) {
                 return console.error(strings.errorCopying);
@@ -88,7 +90,7 @@ module.exports = {
         if (type === 'manifest') {
             recursive(myPath, function (err, files) {
                 files.forEach(function (file) {
-                      module.exports.createFileHash(file, args, manifestFileName);
+                    module.exports.createFileHash(file, args, manifestFileName);
                 });
             });
         }
@@ -122,7 +124,6 @@ module.exports = {
     },
     getManifestFileName: function (bagName, cryptoMethod, type) {
         // 4 Get the full path of the manifest file
-        
         var manifestFileName = bagName + '/' + type + '-' + cryptoMethod + '.txt';
         return manifestFileName;
     }
