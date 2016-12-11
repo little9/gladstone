@@ -62,6 +62,23 @@ module.exports = {
       }
     }
 
+    // Create tag-manifest file
+    var tagManifestFileName = module.exports.getManifestFileName(args.bagName, args.cryptoMethod, 'tagmanifest');
+    fs.writeFile(tagManifestFileName, "", function (err) {
+      if (err){
+        return console.error(strings.errorTagManifest);
+      }
+      console.log(strings.writingTagManifest + tagManifestFileName);
+      
+      fs.readdir(args.bagName, function (err, files) {
+        for(var i in files){
+          if(files[i].substring(files[i].length, files[i].length - 4) === '.txt'){
+            module.exports.createFileHash(args.bagName + '/' + files[i], args, tagManifestFileName);
+          }
+        }
+      });
+    });
+
   },
   copyOriginToData: function (args) {
     var lastDirPath = lastdirpath.getLastDirPath(args.originDirectory);
