@@ -112,14 +112,22 @@ module.exports = {
             },
             function (callback) {
                 async.mapSeries(Object.keys(bagInfo), function (bagInfoKey, callback) {
-                    fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfo[bagInfoKey] + "\n", function (err) {
-                        if (err)
-                        {
-                            console.error(strings.errorBagInfo);
-                            return callback(err);
-                        }
+
+                    if(typeof bagInfo[bagInfoKey] === "string" && bagInfo[bagInfoKey] !== "" && && bagInfo[bagInfoKey] !== " ")
+                    {
+                        fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfo[bagInfoKey] + "\n", function (err) {
+                            if (err)
+                            {
+                                console.error(strings.errorBagInfo);
+                                return callback(err);
+                            }
+                            return callback(null);
+                        });
+                    }
+                    else
+                    {
                         return callback(null);
-                    });
+                    }
                 }, function (err, results) {
                     return callback(err, results);
                 });
