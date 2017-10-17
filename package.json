@@ -22,12 +22,15 @@
     "author": "Jamie Little",
     "license": "NCSA",
     "devDependencies": {
-        "mocha": "2.4.5",
-        "should": "^7.1.1"
+        "mocha": "4.0.1",
+        "should": "^13.1.2"
     },
     "dependencies": {
-        "recursive-readdir": "latest",
+        "async": "^2.5.0",
+        "mkdirp": "^0.5.1",
         "ncp": "latest",
+        "recursive-readdir": "latest",
+        "rimraf": "^2.6.2",
         "yargs": "latest"
     }
 }
