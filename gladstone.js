@@ -50,10 +50,10 @@ module.exports = {
 
                         async.series([
                             function (callback) {
-                                module.exports.writeBagInfo(procArgs, null, callback);
+                                module.exports.writeBagInfo(args, procArgs, callback);
                             },
                             function (callback) {
-                                module.exports.copyOriginToData(procArgs, callback);
+                                module.exports.copyOriginToData(args, callback);
                             }
                         ], function (err, results) {
                             if (!err)
@@ -111,11 +111,11 @@ module.exports = {
                 });
             },
             function (callback) {
-                async.mapSeries(Object.keys(bagInfo), function (bagInfoKey, callback) {
+                async.mapSeries(Object.keys(bagInfoMetadata), function (bagInfoKey, callback) {
 
-                    if(typeof bagInfo[bagInfoKey] === "string" && bagInfo[bagInfoKey] !== "" && bagInfo[bagInfoKey] !== " ")
+                    if(typeof bagInfoMetadata[bagInfoKey] === "string" && bagInfoMetadata[bagInfoKey] !== "" && bagInfoMetadata[bagInfoKey] !== " ")
                     {
-                        fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfo[bagInfoKey] + "\n", function (err) {
+                        fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfoMetadata[bagInfoKey] + "\n", function (err) {
                             if (err)
                             {
                                 console.error(strings.errorBagInfo);
