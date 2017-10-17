@@ -113,7 +113,7 @@ module.exports = {
             function (callback) {
                 async.mapSeries(Object.keys(bagInfo), function (bagInfoKey, callback) {
 
-                    if(typeof bagInfo[bagInfoKey] === "string" && bagInfo[bagInfoKey] !== "" && && bagInfo[bagInfoKey] !== " ")
+                    if(typeof bagInfo[bagInfoKey] === "string" && bagInfo[bagInfoKey] !== "" && bagInfo[bagInfoKey] !== " ")
                     {
                         fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfo[bagInfoKey] + "\n", function (err) {
                             if (err)
