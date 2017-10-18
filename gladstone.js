@@ -23,7 +23,24 @@ const recreateDir = function(directory, callback)
             callback(err);
         });
     });
-}
+};
+
+const possibleMetadataFields = {
+    "Source-Organization": "",
+    "Organization-Address": "",
+    "Contact-Name": "",
+    "Contact-Phone": "",
+    "Contact-Email": "",
+    "External-Description": "",
+    "Bagging-Date": "",
+    "External-Identifier": "",
+    "Internal-Sender-Identifier": "",
+    "Internal-Sender-Description": "",
+    "Bag-Size": "",
+    "Payload-Oxum": "",
+    "Bag-Group-Identifier": "",
+    "Bag-Count": ""
+};
 
 module.exports = {
     createBagDirectory: function (args) {
@@ -50,7 +67,7 @@ module.exports = {
 
                         async.series([
                             function (callback) {
-                                module.exports.writeBagInfo(args, procArgs, callback);
+                                module.exports.writeBagInfo(args, possibleMetadataFields, callback);
                             },
                             function (callback) {
                                 module.exports.copyOriginToData(args, callback);
@@ -111,11 +128,11 @@ module.exports = {
                 });
             },
             function (callback) {
-                async.mapSeries(Object.keys(bagInfoMetadata), function (bagInfoKey, callback) {
+                async.mapSeries(Object.keys(bagInfo).sort(), function (bagInfoKey, callback) {
 
-                    if(typeof bagInfoMetadata[bagInfoKey] === "string" && bagInfoMetadata[bagInfoKey] !== "" && bagInfoMetadata[bagInfoKey] !== " ")
+                    if(typeof possibleMetadataFields[bagInfoKey] && bagInfo[bagInfoKey] != null && bagInfo[bagInfoKey] != "" && bagInfo[bagInfoKey] != " ")
                     {
-                        fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfoMetadata[bagInfoKey] + "\n", function (err) {
+                        fs.appendFile(args.bagName + '/' + 'bag-info.txt', bagInfoKey + ": " + bagInfo[bagInfoKey] + "\n", function (err) {
                             if (err)
                             {
                                 console.error(strings.errorBagInfo);

@@ -18,7 +18,7 @@ var assert = require('assert'),
         });
         fs.rmdirSync(path);
     }
-};   
+};
     
 describe('gladstone', function () {
     describe('#processArgs', function () {
@@ -56,14 +56,29 @@ describe('gladstone', function () {
           });
           
            it('should make a directory for the bag', function() {  
-         return gladstone.createBagDirectory (  { bagName: process.cwd() + '/testbag',
-                      originDirectory: process.cwd() + '/test',
-                      cryptoMethod: 'md5'}).then(function(result) {
-                assert.equal(fs.statSync(process.cwd() + '/testbag').isDirectory(), true);   
-                assert.equal(fs.statSync(process.cwd() + '/testbag/bag-info.txt').isFile(), true);  
-                assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);
-                assert.equal(fs.statSync(process.cwd() + '/testbag/data/test/test.gif').isFile(),true);
-                    });
+         return gladstone.createBagDirectory (
+                {
+                    sourceOrganization: "UP",
+                    organizationAddress: "Universidade do Porto, Praça dos Leões 31",
+                    contactName: "João Rocha da Silva",
+                    contactPhone: "+351 930000000",
+                    contactEmail: "teste@teste.com",
+                    externalDescription: "This is a test project description for a public project type",
+                    bagName: process.cwd() + '/testbag',
+                    originDirectory: process.cwd() + '/test',
+                    cryptoMethod: 'md5'
+                }).then(function(result) {
+                    assert.equal(fs.statSync(process.cwd() + '/testbag').isDirectory(), true);
+                    assert.equal(fs.statSync(process.cwd() + '/testbag/bag-info.txt').isFile(), true);
+
+                    const mockBagInfo = fs.readFileSync(process.cwd() + '/mock/bag-info.txt', "utf-8");
+                    const receivedBagInfo = fs.readFileSync(process.cwd() + '/testbag/bag-info.txt', "utf-8");
+
+                    assert.equal(receivedBagInfo, mockBagInfo);
+
+                    assert.equal(fs.statSync(process.cwd() + '/testbag/manifest-md5.txt').isFile(), true);
+                    assert.equal(fs.statSync(process.cwd() + '/testbag/data/test/test.gif').isFile(),true);
+                });
            });
       });    
     
